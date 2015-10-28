@@ -106,8 +106,12 @@ namespace Posturas
         /// </summary>
         private DrawingImage imageSource;
 
+
+        private bool visible = false;
         // Estructura para indicar las coordenadas de un punto.
-        
+
+        private int cont=0;
+
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -161,15 +165,21 @@ namespace Posturas
         private void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
 
+
             // Create the drawing group we'll use for drawing
             this.drawingGroup = new DrawingGroup();
+           
 
             // Create an image source that we can use in our image control
             this.imageSource = new DrawingImage(this.drawingGroup);
 
+
             // Display the drawing using our image control
             Image.Source = this.imageSource;
-            
+
+            this.instr1.Text = "VÉ HACIA ATRÁS HASTA QUE LOS MÁRGENES \n ESTÉN EN VERDE \n \n PONTE EN LA POSTURA DE LA PRIMERA FOTO ";
+            this.instr2.Text = "\nA CONTINUACIÓN REALIZA EL GESTO QUE INDICA \n LA SECUENCIA DE IMÁGENES";
+
             // Look through all sensors and start the first connected one.
             // This requires that a Kinect is connected at the time of app startup.
             // To make your app robust against plug/unplug, 
@@ -237,140 +247,185 @@ namespace Posturas
         /// <param name="e">event arguments</param>
         private void SensorSkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
-            Skeleton[] skeletons = new Skeleton[0];
-
-            using (SkeletonFrame skeletonFrame = e.OpenSkeletonFrame())
+            if(visible)
             {
-                if (skeletonFrame != null)
+                Skeleton[] skeletons = new Skeleton[0];
+
+                using (SkeletonFrame skeletonFrame = e.OpenSkeletonFrame())
                 {
-                    skeletons = new Skeleton[skeletonFrame.SkeletonArrayLength];
-                    skeletonFrame.CopySkeletonDataTo(skeletons);
+                    if (skeletonFrame != null)
+                    {
+                        skeletons = new Skeleton[skeletonFrame.SkeletonArrayLength];
+                        skeletonFrame.CopySkeletonDataTo(skeletons);
+                    }
                 }
-            }
-            
-            foreach(Skeleton skeleton in skeletons){
-                if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
+
+                foreach (Skeleton skeleton in skeletons)
                 {
-                    Puntos handRight = new Puntos();
-                    handRight.x = skeleton.Joints[JointType.HandRight].Position.X ;
-                    handRight.y = skeleton.Joints[JointType.HandRight].Position.Y;
-                    handRight.z = skeleton.Joints[JointType.HandRight].Position.Z;
-
-                    Puntos handLeft = new Puntos();
-                    handLeft.x = skeleton.Joints[JointType.HandLeft].Position.X;
-                    handLeft.y = skeleton.Joints[JointType.HandLeft].Position.Y;
-                    handLeft.z = skeleton.Joints[JointType.HandLeft].Position.Z;
-
-                    Puntos elbowRight = new Puntos();
-                    elbowRight.x = skeleton.Joints[JointType.ElbowRight].Position.X;
-                    elbowRight.y = skeleton.Joints[JointType.ElbowRight].Position.Y;
-                    elbowRight.z = skeleton.Joints[JointType.ElbowRight].Position.Z;
-
-                    Puntos elbowLeft = new Puntos();
-                    elbowLeft.x = skeleton.Joints[JointType.ElbowLeft].Position.X;
-                    elbowLeft.y = skeleton.Joints[JointType.ElbowLeft].Position.Y;
-                    elbowLeft.z = skeleton.Joints[JointType.ElbowLeft].Position.Z;
-
-                    Puntos kneeRight = new Puntos();
-                    kneeRight.x = skeleton.Joints[JointType.KneeRight].Position.X;
-                    kneeRight.y = skeleton.Joints[JointType.KneeRight].Position.Y;
-                    kneeRight.z = skeleton.Joints[JointType.KneeRight].Position.Z;
-
-                    Puntos kneeLeft = new Puntos();
-                    kneeLeft.x = skeleton.Joints[JointType.KneeLeft].Position.X;
-                    kneeLeft.y = skeleton.Joints[JointType.KneeLeft].Position.Y;
-                    kneeLeft.z = skeleton.Joints[JointType.KneeLeft].Position.Z;
-
-                    Puntos footRight = new Puntos();
-                    footRight.x = skeleton.Joints[JointType.FootRight].Position.X;
-                    footRight.y = skeleton.Joints[JointType.FootRight].Position.Y;
-                    footRight.z = skeleton.Joints[JointType.FootRight].Position.Z;
-
-                    Puntos footLeft = new Puntos();
-                    footLeft.x = skeleton.Joints[JointType.FootLeft].Position.X;
-                    footLeft.y = skeleton.Joints[JointType.FootLeft].Position.Y;
-                    footLeft.z = skeleton.Joints[JointType.FootLeft].Position.Z;
-
-                    //CODIGO DE LLAMADA AL DETECTOR
-                    if (Chin(handRight, handLeft, elbowRight, elbowLeft, kneeRight, kneeLeft, footRight, footLeft)) 
+                    if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
                     {
-                        if (PostureDetector(Posture.Chin))
-                            textblock.Text = "";
-		                    textblock.Text = "Es correcta la postura";
-                    } 
-                    else
-                    {
+                        Puntos handRight = new Puntos();
+                        handRight.x = skeleton.Joints[JointType.HandRight].Position.X;
+                        handRight.y = skeleton.Joints[JointType.HandRight].Position.Y;
+                        handRight.z = skeleton.Joints[JointType.HandRight].Position.Z;
+
+                        Puntos handLeft = new Puntos();
+                        handLeft.x = skeleton.Joints[JointType.HandLeft].Position.X;
+                        handLeft.y = skeleton.Joints[JointType.HandLeft].Position.Y;
+                        handLeft.z = skeleton.Joints[JointType.HandLeft].Position.Z;
+
+                        Puntos elbowRight = new Puntos();
+                        elbowRight.x = skeleton.Joints[JointType.ElbowRight].Position.X;
+                        elbowRight.y = skeleton.Joints[JointType.ElbowRight].Position.Y;
+                        elbowRight.z = skeleton.Joints[JointType.ElbowRight].Position.Z;
+
+                        Puntos elbowLeft = new Puntos();
+                        elbowLeft.x = skeleton.Joints[JointType.ElbowLeft].Position.X;
+                        elbowLeft.y = skeleton.Joints[JointType.ElbowLeft].Position.Y;
+                        elbowLeft.z = skeleton.Joints[JointType.ElbowLeft].Position.Z;
+
+                        Puntos kneeRight = new Puntos();
+                        kneeRight.x = skeleton.Joints[JointType.KneeRight].Position.X;
+                        kneeRight.y = skeleton.Joints[JointType.KneeRight].Position.Y;
+                        kneeRight.z = skeleton.Joints[JointType.KneeRight].Position.Z;
+
+                        Puntos kneeLeft = new Puntos();
+                        kneeLeft.x = skeleton.Joints[JointType.KneeLeft].Position.X;
+                        kneeLeft.y = skeleton.Joints[JointType.KneeLeft].Position.Y;
+                        kneeLeft.z = skeleton.Joints[JointType.KneeLeft].Position.Z;
+
+                        Puntos footRight = new Puntos();
+                        footRight.x = skeleton.Joints[JointType.FootRight].Position.X;
+                        footRight.y = skeleton.Joints[JointType.FootRight].Position.Y;
+                        footRight.z = skeleton.Joints[JointType.FootRight].Position.Z;
+
+                        Puntos footLeft = new Puntos();
+                        footLeft.x = skeleton.Joints[JointType.FootLeft].Position.X;
+                        footLeft.y = skeleton.Joints[JointType.FootLeft].Position.Y;
+                        footLeft.z = skeleton.Joints[JointType.FootLeft].Position.Z;
+
+                        Puntos shoulderCenter = new Puntos();
+                        shoulderCenter.x = skeleton.Joints[JointType.ShoulderCenter].Position.X;
+                        shoulderCenter.y = skeleton.Joints[JointType.ShoulderCenter].Position.Y;
+                        shoulderCenter.z = skeleton.Joints[JointType.ShoulderCenter].Position.Z;
+
+                        Puntos spine = new Puntos();
+                        spine.x = skeleton.Joints[JointType.Spine].Position.X;
+                        spine.y = skeleton.Joints[JointType.Spine].Position.Y;
+                        spine.z = skeleton.Joints[JointType.Spine].Position.Z;
+
+
+                        //CODIGO DE LLAMADA AL DETECTOR
+                        if (Chin(handRight, handLeft, elbowRight, elbowLeft, kneeRight, kneeLeft, footRight, footLeft, shoulderCenter, spine))
+                        {
+                            if (PostureDetector(Posture.Chin))
+                                textblock.Text = "";
+                            textblock.Text = "Es correcta la postura ";
+                        }
+                        else
+                        {
                             textblock.FontSize = 22;
-		                    textblock.Text = "No es correcta la postura";
+                            textblock.Text = "No es correcta la postura";
+                        }
+
+                        //Controlador de margen
+                        float distancia = spine.z * 2 ;
+                        int valor = 25 * (int)distancia;
+                        byte red = Convert.ToByte(225 - valor);
+                        byte green = Convert.ToByte(25 + valor);
+                        this.grid.Background = new SolidColorBrush(Color.FromArgb(255,red,green,0));
+                        
+
                     }
                 }
-            }
 
-            using (DrawingContext dc = this.drawingGroup.Open())
-            {
-                // Draw a transparent background to set the render size
-                dc.DrawRectangle(Brushes.Transparent, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
-
-                if (skeletons.Length != 0)
+                using (DrawingContext dc = this.drawingGroup.Open())
                 {
-                    foreach (Skeleton skel in skeletons)
-                    {
-                        RenderClippedEdges(skel, dc);
+                    // Draw a transparent background to set the render size
+                    dc.DrawRectangle(Brushes.Transparent, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
 
-                        if (skel.TrackingState == SkeletonTrackingState.Tracked)
+                    if (skeletons.Length != 0)
+                    {
+                        foreach (Skeleton skel in skeletons)
                         {
-                            this.DrawBonesAndJoints(skel, dc);
-                            //this.textblock.Text = "Lo estas haciendo bien";
-                        }
-                        else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
-                        {
-                            dc.DrawEllipse(
-                            this.centerPointBrush,
-                            null,
-                            this.SkeletonPointToScreen(skel.Position),
-                            BodyCenterThickness,
-                            BodyCenterThickness);
+                            RenderClippedEdges(skel, dc);
+
+                            if (skel.TrackingState == SkeletonTrackingState.Tracked)
+                            {
+                                this.DrawBonesAndJoints(skel, dc);
+                                //this.textblock.Text = "Lo estas haciendo bien";
+                            }
+                            else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
+                            {
+                                dc.DrawEllipse(
+                                this.centerPointBrush,
+                                null,
+                                this.SkeletonPointToScreen(skel.Position),
+                                BodyCenterThickness,
+                                BodyCenterThickness);
+                            }
                         }
                     }
-                }
 
-                // prevent drawing outside of our render area
-                this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+                    // prevent drawing outside of our render area
+                    this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+                }
             }
         }
 
 
         void SensorColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
-            using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
+            if (visible)
             {
-                if (colorFrame == null) return;
+                using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
+                {
+                    if (colorFrame == null) return;
 
-                byte[] colorData = new byte[colorFrame.PixelDataLength];
+                    byte[] colorData = new byte[colorFrame.PixelDataLength];
 
-                colorFrame.CopyPixelDataTo(colorData);
+                    colorFrame.CopyPixelDataTo(colorData);
 
-                sensorVideo.Source = BitmapSource.Create(colorFrame.Width, colorFrame.Height, 96, 96, PixelFormats.Bgr32, null, colorData, colorFrame.Width * colorFrame.BytesPerPixel);
+                    sensorVideo.Source = BitmapSource.Create(colorFrame.Width, colorFrame.Height, 96, 96, PixelFormats.Bgr32, null, colorData, colorFrame.Width * colorFrame.BytesPerPixel);
+                }
             }
+            
         }
 
         #region Deteccion de postura
 
-        bool Chin(Puntos handRight, Puntos handLeft, Puntos elbowRight, Puntos elbowLeft, Puntos kneeRight, Puntos kneeLeft, Puntos footRight, Puntos footLeft)
+        bool Chin(Puntos handRight, Puntos handLeft, Puntos elbowRight, Puntos elbowLeft, Puntos kneeRight, Puntos kneeLeft, Puntos footRight, Puntos footLeft, Puntos shoulderCenter, Puntos spine)
         {
             bool post = true;
 
+            //Controla que las manos estén a la misma altura y manos y codos en linea recta hacia el suelo
             if (Math.Abs(handRight.y - handLeft.y) > 0.1f || Math.Abs(elbowRight.y - elbowLeft.y) > 0.1f ||
-               Math.Abs(elbowRight.y - handRight.y) > 0.1f || Math.Abs(elbowLeft.y - handLeft.y) > 0.1f){
+               Math.Abs(handRight.x - elbowRight.x) > 0.05f || Math.Abs(handLeft.x - elbowLeft.x) > 0.05f)
+            {
                 post = false;
             }
+
+            //Controla que manos y codos esten a la misma profundidad
+            if (Math.Abs(handRight.z - handLeft.z) > 0.1f || Math.Abs(elbowRight.z - elbowLeft.z) > 0.1f  ||
+                Math.Abs(handRight.z -elbowRight.z) > 0.15f || Math.Abs(handLeft.z - elbowLeft.z) > 0.15f ) 
+            {
+                post = false;
+            }
+
+            if ( (shoulderCenter.y - handRight.y) < 0 || (shoulderCenter.y - handLeft.y) < 0 ||
+                ( handRight.y - spine.y ) < 0 || ( handLeft.y - spine.y ) < 0  ||
+                ( elbowRight.y - spine.y ) < 0 || ( elbowLeft.y - spine.y ) < 0 )
+            {
+                post = false;
+            }
+
 
             if (distance(kneeRight.x, footRight.x) > 0.2f || distance(kneeLeft.x, footLeft.x) > 0.2f ||
                 Math.Abs(kneeRight.y - kneeLeft.y) > 0.2f || Math.Abs(footRight.y - footLeft.y) > 0.2f)
             {
                 post = false;
             }
-           
+            
             return post;
         }
 
@@ -513,6 +568,48 @@ namespace Posturas
 
             drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
         }
+
+        private void ButtonClicked(object sender, RoutedEventArgs e)
+        {
+            cont++;
+            
+            switch (cont)
+            {
+                case 1:
+                    BitmapImage logo = new BitmapImage();
+                    logo.BeginInit();
+                    logo.UriSource = new Uri("C:/Users/Mer/Documents/Visual Studio 2010/Projects/Posturas/Posturas/paco1.png");
+                    logo.EndInit();
+                    this.postura.Source = logo;
+                    this.button.Content = "1";
+                    break;
+                case 2:
+                    this.button.Content = "Quitar tutorial";
+                    break;
+                case 3: 
+                    visible = true;
+
+                    this.tutorial.Background = Brushes.Transparent;
+                    this.instr1.Background = Brushes.Transparent;
+                    this.instr1.Text = "";
+                    this.instr2.Background = Brushes.Transparent;
+                    this.instr2.Text = "";
+                    this.postura.Source = null;
+                    this.button.Content = "";
+                    this.button.BorderBrush = Brushes.AliceBlue;
+                    this.button.Background = Brushes.AliceBlue;
+                    break;
+            }
+
+
+
+
+
+           
+            
+        }
+
+        
 
     
     }  

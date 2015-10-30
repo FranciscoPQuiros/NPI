@@ -21,3 +21,15 @@ C:\Users\Mer\Documents\Visual Studio 2010\Projects\Posturas\Posturas\obj\x86\Deb
 C:\Users\Mer\Documents\Visual Studio 2010\Projects\Posturas\Posturas\obj\x86\Debug\Posturas.g.resources
 C:\Users\Mer\Documents\Visual Studio 2010\Projects\Posturas\Posturas\obj\x86\Debug\Posturas.Properties.Resources.resources
 C:\Users\Mer\Documents\Visual Studio 2010\Projects\Posturas\Posturas\obj\x86\Debug\Posturas.csproj.GenerateResource.Cache
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Posturas.exe
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Posturas.pdb
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\bin\Debug\Posturas.exe
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\bin\Debug\Posturas.pdb
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Posturas.csprojResolveAssemblyReference.cache
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\MainWindow.baml
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\MainWindow.g.cs
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\App.g.cs
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Posturas_MarkupCompile.cache
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Posturas.g.resources
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Posturas.Properties.Resources.resources
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Posturas.csproj.GenerateResource.Cache

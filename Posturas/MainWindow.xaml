@@ -43,7 +43,9 @@
             <TextBlock x:Name="instr1" Margin="62,39,81,325" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF41B12B" Text="" Background="Black" Height="116" Width="497" FontWeight="Bold" FontSize="18" DataContext="{Binding}">  </TextBlock>
             <Image x:Name="postura" Margin="62,161,81,182" Source="/Posturas;component/paco.png" />
             <TextBlock x:Name="instr2" Margin="62,0,81,45" TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Center" Foreground="#FF41B12B" Text="" Background="Black" Height="131" Width="497" FontWeight="Bold" FontSize="18" DataContext="{Binding}"></TextBlock>
+            <Ellipse x:Name="Circulo" Fill="Green" Width="20" Height="20" Margin="282,227,338,233" />
         </Grid>
+    
     </Grid>
 
     

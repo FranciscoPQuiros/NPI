@@ -331,10 +331,16 @@ namespace Posturas
                         //Controlador de margen
                         float distancia = spine.z * 2 ;
                         int valor = 25 * (int)distancia;
+                        
                         byte red = Convert.ToByte(225 - valor);
                         byte green = Convert.ToByte(25 + valor);
+                        if (distancia > 6)
+                        {
+                            red = Convert.ToByte(25 + valor);
+                            green = Convert.ToByte(225 - valor);
+                        }
                         this.grid.Background = new SolidColorBrush(Color.FromArgb(255,red,green,0));
-                        
+                        this.Circulo.Margin();
 
                     }
                 }

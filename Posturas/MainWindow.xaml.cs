@@ -28,6 +28,8 @@ namespace Posturas
         public float z; 
     }
 
+    
+
     public partial class MainWindow : Window
     {
         //Variables para la deteccion de la postura
@@ -38,7 +40,9 @@ namespace Posturas
         public enum Posture 
         { 
 	        None, 
-	        Chin 
+	        Recto,
+            Punios,
+            Spman
         }
 
         /// <summary>
@@ -107,17 +111,24 @@ namespace Posturas
         private DrawingImage imageSource;
 
 
-        private bool visible = false;
+        //Creaccion de las coordenadas donde deberan dibujarse las visualizaciones
+        Point pHombroI, pHombroD, pArribaD;
+        Puntos pauxI, pauxD, pArrD;
+        
+        private bool visible = false,correcto=false, recto=false, posic1=false,posic2=false;
         // Estructura para indicar las coordenadas de un punto.
 
         private int cont=0;
-
+        
+        //Variable para cambiar la precisión
+        private float precision=1;
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();  
+            
         }
 
         
@@ -161,7 +172,11 @@ namespace Posturas
                     new Rect(RenderWidth - ClipBoundsThickness, 0, ClipBoundsThickness, RenderHeight));
             }
         }
-
+        /// <summary>
+        /// Controla los sucesos de la ventana principal
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
 
@@ -177,8 +192,7 @@ namespace Posturas
             // Display the drawing using our image control
             Image.Source = this.imageSource;
 
-            this.instr1.Text = "VÉ HACIA ATRÁS HASTA QUE LOS MÁRGENES \n ESTÉN EN VERDE \n \n PONTE EN LA POSTURA DE LA PRIMERA FOTO ";
-            this.instr2.Text = "\nA CONTINUACIÓN REALIZA EL GESTO QUE INDICA \n LA SECUENCIA DE IMÁGENES";
+           
 
             // Look through all sensors and start the first connected one.
             // This requires that a Kinect is connected at the time of app startup.
@@ -284,6 +298,8 @@ namespace Posturas
                         elbowLeft.y = skeleton.Joints[JointType.ElbowLeft].Position.Y;
                         elbowLeft.z = skeleton.Joints[JointType.ElbowLeft].Position.Z;
 
+                        
+
                         Puntos kneeRight = new Puntos();
                         kneeRight.x = skeleton.Joints[JointType.KneeRight].Position.X;
                         kneeRight.y = skeleton.Joints[JointType.KneeRight].Position.Y;
@@ -293,6 +309,16 @@ namespace Posturas
                         kneeLeft.x = skeleton.Joints[JointType.KneeLeft].Position.X;
                         kneeLeft.y = skeleton.Joints[JointType.KneeLeft].Position.Y;
                         kneeLeft.z = skeleton.Joints[JointType.KneeLeft].Position.Z;
+
+                        Puntos shoulderRight = new Puntos();
+                        kneeRight.x = skeleton.Joints[JointType.ShoulderRight].Position.X;
+                        kneeRight.y = skeleton.Joints[JointType.ShoulderRight].Position.Y;
+                        kneeRight.z = skeleton.Joints[JointType.ShoulderRight].Position.Z;
+
+                        Puntos shoulderLeft = new Puntos();
+                        kneeLeft.x = skeleton.Joints[JointType.ShoulderLeft].Position.X;
+                        kneeLeft.y = skeleton.Joints[JointType.ShoulderLeft].Position.Y;
+                        kneeLeft.z = skeleton.Joints[JointType.ShoulderLeft].Position.Z;
 
                         Puntos footRight = new Puntos();
                         footRight.x = skeleton.Joints[JointType.FootRight].Position.X;
@@ -314,33 +340,67 @@ namespace Posturas
                         spine.y = skeleton.Joints[JointType.Spine].Position.Y;
                         spine.z = skeleton.Joints[JointType.Spine].Position.Z;
 
-
-                        //CODIGO DE LLAMADA AL DETECTOR
-                        if (Chin(handRight, handLeft, elbowRight, elbowLeft, kneeRight, kneeLeft, footRight, footLeft, shoulderCenter, spine))
+                        if (recto && correcto)
                         {
-                            if (PostureDetector(Posture.Chin))
-                                textblock.Text = "";
-                            textblock.Text = "Es correcta la postura ";
+                            if (posic1)
+                            {
+                                //Cambiamos visualizacion de puntos
+                                if (posic2)
+                                {
+                                    this.textblock.Text = "Genial. Has realizado todos los pasos correctamente.";
+                                }
+                                else
+                                {
+                                    this.textblock.Text = "Debe llevar la mano derecha hasta el circulo superior.";
+                                    if (Posic2(handRight, handLeft))
+                                    {
+                                        this.textblock.Text = "";
+                                        posic2 = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                this.textblock.Text = "Debe colocar las manos en los circulos.";
+                                if (Posic1(handRight, handLeft))
+                                {
+                                    this.textblock.Text = "";
+                                    posic1 = true;
+                                }
+                            }
                         }
                         else
                         {
-                            textblock.FontSize = 22;
-                            textblock.Text = "No es correcta la postura";
+                            this.textblock.Text = "Pongase lo mas recto posible. Cuando este bien apareceran unos circulos";
+                            if (Recto(kneeRight, kneeLeft, footRight, footLeft, shoulderLeft, shoulderRight))
+                            {
+                                this.textblock.Text = "";
+                                recto = true;
+                            }
                         }
 
-                        //Controlador de margen
+
+                        //Controlador de color de margen
                         float distancia = spine.z * 2 ;
                         int valor = 25 * (int)distancia;
                         
                         byte red = Convert.ToByte(225 - valor);
                         byte green = Convert.ToByte(25 + valor);
+                        correcto = false;
                         if (distancia > 6)
                         {
                             red = Convert.ToByte(25 + valor);
                             green = Convert.ToByte(225 - valor);
                         }
-                        this.grid.Background = new SolidColorBrush(Color.FromArgb(255,red,green,0));
-                        this.Circulo.Margin();
+                        if (red == 100 && green == 150)
+                        {
+                            correcto = true;
+                        }
+                        SolidColorBrush scb = new SolidColorBrush(Color.FromArgb(255, red, green, 0));
+                        this.grid.Background = scb;
+
+                        this.button.BorderBrush = scb;
+                        this.button.Background = new SolidColorBrush(Color.FromArgb(255, red, green, 0));
 
                     }
                 }
@@ -359,6 +419,42 @@ namespace Posturas
                             if (skel.TrackingState == SkeletonTrackingState.Tracked)
                             {
                                 this.DrawBonesAndJoints(skel, dc);
+                                //-------------------------------------------
+                                Pen redPen = new Pen(Brushes.Red, 3);
+                                Pen greenPen = new Pen(Brushes.Green, 3);
+
+                                //LLamada al detector y visualizador de ayudas
+                                if (recto && correcto)
+                                {
+
+                                    if (!posic1)
+                                    {
+                                        dc.DrawEllipse(Brushes.Transparent, redPen, pHombroD, 15, 15);
+                                        dc.DrawEllipse(Brushes.Transparent, redPen, pHombroI, 15, 15);
+                                    }
+                                    else
+                                    {
+                                        
+
+                                        //Cambiamos visualizacion de puntos
+                                        if (posic2)
+                                        {
+                                            dc.DrawEllipse(Brushes.Transparent, greenPen, pHombroD, 15, 15);
+                                            dc.DrawEllipse(Brushes.Transparent, greenPen, pHombroI, 15, 15);
+                                            dc.DrawEllipse(Brushes.Transparent, greenPen, pArribaD, 15, 15);
+
+                                            this.textblock.Text = "Genial. Has realizado todos los pasos correctamente.";
+                                        }
+                                        else
+                                        {
+                                            dc.DrawEllipse(Brushes.Transparent, greenPen, pHombroD, 15, 15);
+                                            dc.DrawEllipse(Brushes.Transparent, greenPen, pHombroI, 15, 15);
+                                            dc.DrawEllipse(Brushes.Transparent, redPen, pArribaD, 15, 15);
+                                        }
+                                    }
+                                }
+                                
+
                                 //this.textblock.Text = "Lo estas haciendo bien";
                             }
                             else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
@@ -379,7 +475,11 @@ namespace Posturas
             }
         }
 
-
+        /// <summary>
+        /// Video en color
+        /// </summary>
+        /// <param name="sender">object sending the event</param>
+        /// <param name="e">event arguments</param>
         void SensorColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
             if (visible)
@@ -400,38 +500,55 @@ namespace Posturas
 
         #region Deteccion de postura
 
-        bool Chin(Puntos handRight, Puntos handLeft, Puntos elbowRight, Puntos elbowLeft, Puntos kneeRight, Puntos kneeLeft, Puntos footRight, Puntos footLeft, Puntos shoulderCenter, Puntos spine)
+        //Detect que el usuario este recto. Sirve para saber donde se tienen que colocar las manos al hacer la postura y el gesto.
+        bool Recto(Puntos kneeRight, Puntos kneeLeft, Puntos footRight, Puntos footLeft, Puntos shoulderLeft, Puntos shoulderRight)
         {
             bool post = true;
 
-            //Controla que las manos estén a la misma altura y manos y codos en linea recta hacia el suelo
-            if (Math.Abs(handRight.y - handLeft.y) > 0.1f || Math.Abs(elbowRight.y - elbowLeft.y) > 0.1f ||
-               Math.Abs(handRight.x - elbowRight.x) > 0.05f || Math.Abs(handLeft.x - elbowLeft.x) > 0.05f)
-            {
-                post = false;
-            }
 
             //Controla que manos y codos esten a la misma profundidad
-            if (Math.Abs(handRight.z - handLeft.z) > 0.1f || Math.Abs(elbowRight.z - elbowLeft.z) > 0.1f  ||
-                Math.Abs(handRight.z -elbowRight.z) > 0.15f || Math.Abs(handLeft.z - elbowLeft.z) > 0.15f ) 
+            if (Math.Abs(shoulderRight.z - shoulderLeft.z) > 0.1f || Math.Abs(shoulderRight.y - shoulderLeft.y) > 0.1f) 
             {
                 post = false;
             }
 
-            if ( (shoulderCenter.y - handRight.y) < 0 || (shoulderCenter.y - handLeft.y) < 0 ||
-                ( handRight.y - spine.y ) < 0 || ( handLeft.y - spine.y ) < 0  ||
-                ( elbowRight.y - spine.y ) < 0 || ( elbowLeft.y - spine.y ) < 0 )
-            {
-                post = false;
-            }
-
-
+            
             if (distance(kneeRight.x, footRight.x) > 0.2f || distance(kneeLeft.x, footLeft.x) > 0.2f ||
                 Math.Abs(kneeRight.y - kneeLeft.y) > 0.2f || Math.Abs(footRight.y - footLeft.y) > 0.2f)
             {
                 post = false;
             }
             
+            return post;
+        }
+
+        //Este es el controlador de la postura inicial
+        bool Posic1(Puntos handRight, Puntos handLeft)
+        {
+            bool post = true;
+
+            
+            if (Math.Abs(handRight.y - pauxD.y) > 0.06f*precision || Math.Abs(handLeft.y - pauxI.y) > 0.06f*precision
+                || Math.Abs(handRight.x - pauxD.x) > 0.05f*precision || Math.Abs(handLeft.x - pauxI.x) > 0.05f*precision)
+            {
+                
+                post = false;
+            }
+
+            return post;
+        }
+
+        //Controlador del gesto.
+        bool Posic2(Puntos handRight, Puntos handLeft)
+        {
+            bool post = true;
+            if (Math.Abs(handRight.y - pArrD.y) > 0.1f*precision || Math.Abs(handLeft.y - pauxI.y) > 0.06f*precision
+                || Math.Abs(handRight.x - pArrD.x) > 0.1f*precision || Math.Abs(handLeft.x - pauxI.x) > 0.05f*precision)
+            {
+                //this.button.Content = Math.Abs(handRight.y - pauxD.y).ToString();
+                post = false;
+            }
+
             return post;
         }
 
@@ -443,7 +560,7 @@ namespace Posturas
                 return Math.Abs(right + left);
         }
 
-        bool PostureDetector(Posture posture)
+        /*bool PostureDetector(Posture posture)
         {
             if (postureInDetection != posture)
             {
@@ -465,7 +582,7 @@ namespace Posturas
             else
                 accumulator = 0;
             return false;
-        }
+        }*/
 
         #endregion
 
@@ -524,6 +641,37 @@ namespace Posturas
                     drawingContext.DrawEllipse(drawBrush, null, this.SkeletonPointToScreen(joint.Position), JointThickness, JointThickness);
                 }
             }
+
+            if (cont == 3 && recto && correcto)
+            {
+                cont++;
+                pauxD.x = skeleton.Joints[JointType.ShoulderRight].Position.X;
+                pauxD.y = skeleton.Joints[JointType.ShoulderRight].Position.Y;
+                pauxI.x = skeleton.Joints[JointType.ShoulderLeft].Position.X ;
+                pauxI.y = skeleton.Joints[JointType.ShoulderLeft].Position.Y;
+                pHombroI = this.SkeletonPointToScreen(skeleton.Joints[JointType.ShoulderLeft].Position);
+                pHombroD = this.SkeletonPointToScreen(skeleton.Joints[JointType.ShoulderRight].Position);
+                pHombroD.X += 10;
+                pHombroI.X -= 10;
+                
+                float dis_cm = skeleton.Joints[JointType.WristRight].Position.Y - skeleton.Joints[JointType.ShoulderRight].Position.Y;
+                SkeletonPoint sk = skeleton.Joints[JointType.ShoulderRight].Position;
+                sk.Y -= dis_cm;
+
+                pArrD.x = skeleton.Joints[JointType.ShoulderRight].Position.X;
+                pArrD.y = skeleton.Joints[JointType.ShoulderRight].Position.Y - dis_cm;
+                pArribaD = this.SkeletonPointToScreen(sk);
+                pArribaD.X += 10;
+               
+                //Math.Sqrt(Math.Pow((skel.Joints[JointType.ShoulderRight].Position.X - skel.Joints[JointType.WristRight].Position.X), 2) + Math.Pow((skel.Joints[JointType.ShoulderRight].Position.Y - skel.Joints[JointType.WristRight].Position.Y), 2));
+                
+
+
+                
+            }
+            
+
+
         }
 
         /// <summary>
@@ -581,15 +729,25 @@ namespace Posturas
             
             switch (cont)
             {
+                
                 case 1:
+                    this.instr1.Text = "VÉ HACIA ATRÁS HASTA QUE LOS MÁRGENES \n ESTÉN EN VERDE \n";
+                    this.instr2.Text = "\nLUEGO, PONTE EN LA POSTURA QUE INDICA LA IMAGEN";
                     BitmapImage logo = new BitmapImage();
                     logo.BeginInit();
                     logo.UriSource = new Uri("C:/Users/Mer/Documents/Visual Studio 2010/Projects/Posturas/Posturas/paco1.png");
                     logo.EndInit();
                     this.postura.Source = logo;
-                    this.button.Content = "1";
+                    this.button.Content = "Siguiente";
                     break;
                 case 2:
+                    this.instr1.Text = "\nEL GESTO A HACER ES EL SIGUIENTE\n";
+                    this.instr2.Text = "Se muestran más indicaciones que facilitaran\n los pasos a realizar";
+                    BitmapImage logo1 = new BitmapImage();
+                    logo1.BeginInit();
+                    logo1.UriSource = new Uri("C:/Users/Mer/Documents/Visual Studio 2010/Projects/Posturas/Posturas/paco.png");
+                    logo1.EndInit();
+                    this.postura.Source = logo1;
                     this.button.Content = "Quitar tutorial";
                     break;
                 case 3: 
@@ -602,20 +760,36 @@ namespace Posturas
                     this.instr2.Text = "";
                     this.postura.Source = null;
                     this.button.Content = "";
-                    this.button.BorderBrush = Brushes.AliceBlue;
                     this.button.Background = Brushes.AliceBlue;
                     break;
             }
 
 
 
-
+            
 
            
             
         }
 
-        
+        //Funciones que detecta si se ha pulsado la flecha de arriba o abajo. Sirven para subir o bajar la precision.
+        private void bajarPrecision(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Down)
+            {
+                this.button.Content = "Baja precision";
+                precision /= 2;
+            }
+        }
+
+        private void subirPrecision(object sender, KeyEventArgs e)
+        {
+            if (e.Key==Key.Up)
+            {
+                this.button.Content = "Sube precision";
+                precision *= 2;
+            }
+        }
 
     
     }  

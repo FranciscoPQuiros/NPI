@@ -1,0 +1,11 @@
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\obj\x86\Debug\MainWindow.baml
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\obj\x86\Debug\MainWindow.g.cs
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\obj\x86\Debug\App.g.cs
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\obj\x86\Debug\Practica2_MarkupCompile.cache
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\obj\x86\Debug\Practica2.g.resources
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\obj\x86\Debug\Practica2.Properties.Resources.resources
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\obj\x86\Debug\Practica2.csproj.GenerateResource.Cache
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\bin\Debug\Practica2.exe
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\bin\Debug\Practica2.pdb
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\obj\x86\Debug\Practica2.exe
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Practica2\obj\x86\Debug\Practica2.pdb

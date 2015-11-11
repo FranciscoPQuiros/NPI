@@ -1,0 +1,47 @@
+﻿<Window x:Class="Posturas.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        
+        Title="MainWindow" Height="735" Width="770" Loaded="Window_Loaded_1" Closing="WindowClosing" ResizeMode="NoResize"
+        KeyDown="bajarPrecision" KeyUp="subirPrecision" >
+    
+    
+    
+    <Window.Resources>
+        <Style x:Key="NoChromeButton" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid x:Name="Chrome" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#ADADAD"/>
+                                <Setter Property="Opacity" TargetName="Chrome" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    </Window.Resources>
+
+
+    <Grid x:Name="grid" OpacityMask="White" Background="AliceBlue">
+        <TextBlock x:Name="textblock" Margin="0,0,0,594" Background="Transparent" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24">  </TextBlock>
+        <Image x:Name="sensorVideo" Width="640" Height="480" />
+        <Image x:Name="Image" Width="640" Height="480" />
+        <!--<Image x:Name="Captura" Source="/Practica2;component/Images/boton.jpg" Width="40" Height="40" Margin="464,428,244,228" OpacityMask="#BF000000" />-->
+        
+    </Grid>
+
+    
+</Window>

@@ -25,7 +25,6 @@ C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Po
 C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Posturas.pdb
 C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\bin\Debug\Posturas.exe
 C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\bin\Debug\Posturas.pdb
-C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\Posturas.csprojResolveAssemblyReference.cache
 C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\MainWindow.baml
 C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\MainWindow.g.cs
 C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\obj\x86\Debug\App.g.cs
@@ -45,3 +44,4 @@ C:\Users\Paco\Documents\GitHub\NPI\Posturas\obj\x86\Debug\Posturas.csproj.Genera
 C:\Users\Paco\Documents\GitHub\NPI\Posturas\obj\x86\Debug\Posturas.exe
 C:\Users\Paco\Documents\GitHub\NPI\Posturas\obj\x86\Debug\Posturas.pdb
 C:\Users\Paco\Documents\GitHub\NPI\Posturas\bin\Debug\Posturas.exe.config
+C:\Users\Mer\Documents\Visual Studio 2010\Projects\NPI\Posturas\bin\Debug\Posturas.exe.config

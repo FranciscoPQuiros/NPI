@@ -1,8 +1,11 @@
 ﻿<Window x:Class="Posturas.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        
         Title="MainWindow" Height="735" Width="770" Loaded="Window_Loaded_1" Closing="WindowClosing" ResizeMode="NoResize"
         KeyDown="bajarPrecision" KeyUp="subirPrecision" >
+    
+    
     
     <Window.Resources>
         <Style x:Key="NoChromeButton" TargetType="{x:Type Button}">
@@ -28,25 +31,23 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
     </Window.Resources>
 
 
-    <Grid x:Name="grid" Background="AliceBlue" OpacityMask="White">
-        <Button  x:Name="button" Style="{DynamicResource NoChromeButton}" Click="ButtonClicked" FontFamily="Segoe UI" Foreground="Black" Width="100" Height="30" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,54,41" Content="Siguiente" BorderBrush="#FF654949" Background="White" FontStyle="Normal" FontWeight="Bold">
+    <Grid x:Name="grid" OpacityMask="White" Background="AliceBlue">
+        <Button  x:Name="button" Style="{DynamicResource NoChromeButton}" Click="ButtonClicked" FontFamily="Segoe UI" Foreground="Black" Width="100" Height="30" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,54,41" Content="Siguiente" BorderBrush="#FF7C4949" Background="White" FontStyle="Normal" FontWeight="Bold">
         </Button>
         <TextBlock x:Name="textblock" Margin="0,0,0,594" Background="Transparent" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24">  </TextBlock>
-        <Image x:Name="sensorVideo" Width="640" Height="480" >
-            
-        </Image>
+        <Image x:Name="sensorVideo" Width="640" Height="480" />
         <Image x:Name="Image" Width="640" Height="480" />
         
+        
         <Grid x:Name="tutorial" Background="Black" Margin="54,108" OpacityMask="White">
-            <TextBlock x:Name="instr1" Margin="62,39,81,325" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF41B12B" Text="Tutorial" Background="Black" Height="116" Width="497" FontWeight="Bold" FontSize="18" DataContext="{Binding}">  </TextBlock>
-            <Image x:Name="postura" Margin="62,161,81,182" />
-            <TextBlock x:Name="instr2" Margin="62,0,81,45" TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Center" Foreground="#FF41B12B" Text="" Background="Black" Height="131" Width="497" FontWeight="Bold" FontSize="18" DataContext="{Binding}"></TextBlock>
-            <!--<Ellipse x:Name="Circulo" Fill="Green" Width="20" Height="20" Margin="282,227,338,233" />-->
+            <TextBlock x:Name="instr1" Margin="62,39,81,380" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF41B12B" Text="" Background="Black" Height="61" Width="497" FontWeight="Bold" FontSize="18" DataContext="{Binding}">  </TextBlock>
+            <Image x:Name="postura" Margin="84,106,94,27" DataContext="{Binding}" Source="/Posturas;component/Images/Captura.PNG" />
+            
         </Grid>
-    
     </Grid>
 
     

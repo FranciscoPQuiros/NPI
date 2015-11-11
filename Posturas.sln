@@ -3,6 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Posturas", "Posturas\Posturas.csproj", "{284B29C6-E673-478E-97AA-D4CB668D9CD7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B0D1F742-5E1F-46DC-8B05-F776453146DA}"
+	ProjectSection(SolutionItems) = preProject
+		Posturas\Captura.PNG = Posturas\Captura.PNG
+		Posturas\Captura1.PNG = Posturas\Captura1.PNG
+		Posturas\Captura2.PNG = Posturas\Captura2.PNG
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86

@@ -181,6 +181,8 @@ namespace Posturas
         {
 
 
+            this.instr1.Text = "VÉ HACIA ATRÁS HASTA QUE EL BORDE SE PONGA VERDE \n Y APAREZCAN LOS CÍRCULOS";
+
             // Create the drawing group we'll use for drawing
             this.drawingGroup = new DrawingGroup();
            
@@ -507,7 +509,7 @@ namespace Posturas
 
 
             //Controla que manos y codos esten a la misma profundidad
-            if (Math.Abs(shoulderRight.z - shoulderLeft.z) > 0.1f || Math.Abs(shoulderRight.y - shoulderLeft.y) > 0.1f) 
+            if (Math.Abs(shoulderRight.z - shoulderLeft.z) > 0.005f || Math.Abs(shoulderRight.y - shoulderLeft.y) > 0.1f) 
             {
                 post = false;
             }
@@ -731,21 +733,19 @@ namespace Posturas
             {
                 
                 case 1:
-                    this.instr1.Text = "VÉ HACIA ATRÁS HASTA QUE LOS MÁRGENES \n ESTÉN EN VERDE \n";
-                    this.instr2.Text = "\nLUEGO, PONTE EN LA POSTURA QUE INDICA LA IMAGEN";
+                    this.instr1.Text = " COLOQUE LAS MANOS EN LOS CIRCULOS \nHASTA QUE APAREZCAN VERDES";
                     BitmapImage logo = new BitmapImage();
                     logo.BeginInit();
-                    logo.UriSource = new Uri("C:/Users/Mer/Documents/Visual Studio 2010/Projects/Posturas/Posturas/paco1.png");
+                    logo.UriSource = new Uri("Images/Captura1.PNG", UriKind.Relative);
                     logo.EndInit();
                     this.postura.Source = logo;
                     this.button.Content = "Siguiente";
                     break;
                 case 2:
-                    this.instr1.Text = "\nEL GESTO A HACER ES EL SIGUIENTE\n";
-                    this.instr2.Text = "Se muestran más indicaciones que facilitaran\n los pasos a realizar";
+                    this.instr1.Text = "\nLLEVE SU MANO HACIA EL CIRCULO QUE APARECE";
                     BitmapImage logo1 = new BitmapImage();
                     logo1.BeginInit();
-                    logo1.UriSource = new Uri("C:/Users/Mer/Documents/Visual Studio 2010/Projects/Posturas/Posturas/paco.png");
+                    logo1.UriSource = new Uri("Images/Captura2.PNG", UriKind.Relative);
                     logo1.EndInit();
                     this.postura.Source = logo1;
                     this.button.Content = "Quitar tutorial";
@@ -756,8 +756,7 @@ namespace Posturas
                     this.tutorial.Background = Brushes.Transparent;
                     this.instr1.Background = Brushes.Transparent;
                     this.instr1.Text = "";
-                    this.instr2.Background = Brushes.Transparent;
-                    this.instr2.Text = "";
+                   
                     this.postura.Source = null;
                     this.button.Content = "";
                     this.button.Background = Brushes.AliceBlue;

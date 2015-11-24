@@ -20,3 +20,9 @@ C:\Users\Paco\Documents\GitHub\NPI\Practica2\obj\x86\Debug\Practica2_MarkupCompi
 C:\Users\Paco\Documents\GitHub\NPI\Practica2\obj\x86\Debug\Practica2.g.resources
 C:\Users\Paco\Documents\GitHub\NPI\Practica2\obj\x86\Debug\Practica2.Properties.Resources.resources
 C:\Users\Paco\Documents\GitHub\NPI\Practica2\obj\x86\Debug\Practica2.csproj.GenerateResource.Cache
+C:\Users\Paco\Documents\GitHub\NPI\Practica2\bin\Debug\Coding4Fun.Kinect.WinForm.dll
+C:\Users\Paco\Documents\GitHub\NPI\Practica2\bin\Debug\Coding4Fun.Kinect.Wpf.dll
+C:\Users\Paco\Documents\GitHub\NPI\Practica2\bin\Debug\Microsoft.Expression.Drawing.dll
+C:\Users\Paco\Documents\GitHub\NPI\Practica2\bin\Debug\Coding4Fun.Kinect.WinForm.pdb
+C:\Users\Paco\Documents\GitHub\NPI\Practica2\bin\Debug\Coding4Fun.Kinect.Wpf.pdb
+C:\Users\Paco\Documents\GitHub\NPI\Practica2\obj\x86\Debug\Practica2.csprojResolveAssemblyReference.cache

@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Kinect;
 using System.IO;
+using Coding4Fun.Kinect.Wpf;
 
 namespace Posturas
 {
@@ -32,6 +33,7 @@ namespace Posturas
 
     public partial class MainWindow : Window
     {
+        
         //Variables para la deteccion de la postura
         const int PostureDetectionNumber = 10;
        
@@ -126,10 +128,11 @@ namespace Posturas
         //Creaccion de las coordenadas donde deberan dibujarse las visualizaciones
         Point puntocomp;
 
-        private bool  color=true, depth=false, correcto=false, infrared=false;
+        private bool  color=true, depth=false, correcto=false, infrared=false, slider=false, captura=false;
 
-        private int contadorCaptura = 0, contadorVideo=0, contadorDepth=0, contadorInfrared=0,cont=0;
+        private int contadorCaptura = 0, contadorVideo = 0, contadorDepth = 0, contadorInfrared = 0, cont = 0, contadorSlider=0, angule=0;
 
+        private double handY = 250.0;
         //Variable para cambiar la precisión
         private float precision = 4;
         /// <summary>
@@ -138,6 +141,7 @@ namespace Posturas
         public MainWindow()
         {
             InitializeComponent();
+            
         }
 
 
@@ -235,6 +239,7 @@ namespace Posturas
                 try
                 {
                     this.sensor.Start();
+                    this.sensor.ElevationAngle = angule;
                 }
                 catch (IOException)
                 {
@@ -268,7 +273,7 @@ namespace Posturas
         private void SensorSkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
                 Skeleton[] skeletons = new Skeleton[0];
-                puntocomp = new Point(410, 410);
+                puntocomp = new Point(40, 40);
                 using (SkeletonFrame skeletonFrame = e.OpenSkeletonFrame())
                 {
                     if (skeletonFrame != null)
@@ -308,9 +313,17 @@ namespace Posturas
 
                         Point pr = SkeletonPointToScreen(skeleton.Joints[JointType.HandRight].Position);
                         Point pl = SkeletonPointToScreen(skeleton.Joints[JointType.HandLeft].Position);
-                        if (tocarCaptura(pr, pl,puntocomp) && contadorCaptura >= 50)
+                        if (tocarCaptura(pr, pl, puntocomp) && contadorCaptura >= 50)
                         {
-                            this.textblock.Text = "Captura";
+                            if (depth || color)
+                            {
+                                captura = true;
+                            }
+                            
+                        }
+                        else
+                        {
+                            captura = false;
                         }
                         
                         if (tocarDepth(pr, pl) && contadorDepth >= 50)
@@ -325,21 +338,59 @@ namespace Posturas
                         {
                             cambioVisualizacion("color");
                         }
+
+                        if (tocarSlider(pr) && contadorSlider >= 25)
+                        {
+                            if (!slider)
+                            {
+                                slider = true;
+                            }
+                            Point aux = SkeletonPointToScreen(skeleton.Joints[JointType.HandRight].Position);
+
+                            if (aux.Y < 75.0)
+                            {
+                                handY = 75.0;
+                            }
+                            else if (aux.Y > 425.0)
+                            {
+                                handY = 425.0;
+                            }
+                            else
+                            {
+                                handY = aux.Y;
+
+                            }
+                        }
+                        else if(slider){
+                            slider = false;
+                            angule = -27 + (int)Math.Round(54.0 * (425 - handY) / 350);
+                            cambioAngulo();
+                        }
+
                     }
                 }
 
                 using (DrawingContext dc = this.drawingGroup.Open())
                 {
                     Pen pen = new Pen(Brushes.Green, 3);
+
+                    dc.DrawEllipse(Brushes.Transparent, pen, puntocomp, 30, 30);
                     // Draw a transparent background to set the render size
                     dc.DrawRectangle(Brushes.Transparent, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
 
-                    dc.DrawRectangle(Brushes.LightGray, pen, new Rect(0.0, 390.0, 150.0, 130.0));
-                    dc.DrawRectangle(Brushes.LightGray, pen, new Rect(150.0, 390.0, 150.0, 130.0));
-                    dc.DrawRectangle(Brushes.LightGray, pen, new Rect(300.0, 390.0, 150.0, 130.0));
-                    FormattedText fText = new FormattedText("Color",System.Globalization.CultureInfo.GetCultureInfo("en-us"),FlowDirection.LeftToRight,new Typeface("Verdana"),24,Brushes.Black);
-                    FormattedText fText2 = new FormattedText("Depth", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.Black);
-                    FormattedText fText3 = new FormattedText("IR", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.Black);
+                    dc.DrawRectangle(Brushes.Transparent, new Pen(Brushes.Gray, 3), new Rect(0.0, 390.0, 150.0, 130.0));
+                    dc.DrawRectangle(Brushes.Transparent, new Pen(Brushes.Gray, 3), new Rect(150.0, 390.0, 150.0, 130.0));
+                    dc.DrawRectangle(Brushes.Transparent, new Pen(Brushes.Gray, 3), new Rect(300.0, 390.0, 150.0, 130.0));
+
+                    dc.DrawRectangle(Brushes.White, new Pen(Brushes.Gray, 3), new Rect(560.0, 75.0, 10.0, 350.0));
+
+                    
+                    dc.DrawRectangle(Brushes.White, new Pen(Brushes.Gray, 3), new Rect(540.0, handY, 50.0, 20.0));
+                    
+
+                    FormattedText fText = new FormattedText("Color",System.Globalization.CultureInfo.GetCultureInfo("en-us"),FlowDirection.LeftToRight,new Typeface("Verdana"),24,Brushes.White);
+                    FormattedText fText2 = new FormattedText("Depth", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.White);
+                    FormattedText fText3 = new FormattedText("IR", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.White);
                    
                     dc.DrawText(fText, new Point(45.0,425.0));
                     dc.DrawText(fText2, new Point(190.0, 425.0));
@@ -357,6 +408,8 @@ namespace Posturas
         /// <param name="e">event arguments</param>
         void SensorColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
+            
+
                 using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
                 {
                     if (colorFrame == null) return;
@@ -366,7 +419,14 @@ namespace Posturas
                     colorFrame.CopyPixelDataTo(colorData);
 
                     sensorVideo.Source = BitmapSource.Create(colorFrame.Width, colorFrame.Height, 96, 96, PixelFormats.Bgr32, null, colorData, colorFrame.Width * colorFrame.BytesPerPixel);
+
+                    this.colorBitmap.WritePixels(
+                        new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight),
+                        this.colorPixels,
+                        this.colorBitmap.PixelWidth * sizeof(int),
+                        0);
                 }
+
 
         }
         // <summary>
@@ -425,6 +485,46 @@ namespace Posturas
                         this.colorPixels,
                         this.colorBitmap.PixelWidth * sizeof(int),
                         0);
+                }
+
+                if (captura)
+                {
+                    captura = false;
+
+                    BitmapEncoder encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(this.colorBitmap));
+                    string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Image.png");
+                    try
+                    {
+                        using (FileStream fs = new FileStream(path, FileMode.Create))
+                        {
+                            encoder.Save(fs);
+                        }
+                    }
+                    catch (IOException ioe)
+                    {
+                        Console.WriteLine(ioe.ToString());
+                    }
+                }
+            }
+
+            if (captura)
+            {
+                captura = false;
+
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(this.colorBitmap));
+                string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Image.png");
+                try
+                {
+                    using (FileStream fs = new FileStream(path, FileMode.Create))
+                    {
+                        encoder.Save(fs);
+                    }
+                }
+                catch (IOException ioe)
+                {
+                    Console.WriteLine(ioe.ToString());
                 }
             }
         }
@@ -534,6 +634,7 @@ namespace Posturas
 
             return post;
         }
+
         bool tocarInfrared(Point handRight, Point handLeft)
         {
             bool post = false;
@@ -548,6 +649,24 @@ namespace Posturas
             else
             {
                 contadorInfrared = 0;
+            }
+
+            return post;
+        }
+
+        bool tocarSlider(Point handRight)
+        {
+            bool post = false;
+
+            if (handRight.X > 530.0 && handRight.X < 600.0 && Math.Abs(handRight.Y - handY) < 10*precision )
+            {
+                
+                post = true;
+                contadorSlider++;
+            }
+            else
+            {
+                contadorSlider = 0;
             }
 
             return post;
@@ -885,7 +1004,12 @@ namespace Posturas
             }
 
 
-        }    
+        }
+
+        private void cambioAngulo()
+        {
+            this.sensor.ElevationAngle = angule;
+        }
            
 
     }

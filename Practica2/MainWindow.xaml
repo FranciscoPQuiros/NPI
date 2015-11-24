@@ -37,10 +37,10 @@
 
     <Grid x:Name="grid" OpacityMask="White" Background="AliceBlue">
         <TextBlock x:Name="textblock" Margin="0,0,0,594" Background="Transparent" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24">  </TextBlock>
-        <Image x:Name="sensorVideo" Width="640" Height="480" />
-        <Image x:Name="sensorDepth" Width="640" Height="480" />
-        <Image x:Name="sensorInfrared" Width="640" Height="480" />
-        <Image x:Name="Image" Width="640" Height="480" />
+        <Image x:Name="sensorVideo" Width="640" Height="520" Margin="54,108,54,28" />
+        <Image x:Name="sensorDepth" Width="640" Height="520" Margin="54,108,54,28" />
+        <Image x:Name="sensorInfrared" Width="640" Height="520" Margin="54,108,54,28" />
+        <Image x:Name="Image" Width="640" Height="520" Margin="54,108,54,28" />
         <!--<Image x:Name="Captura" Source="/Practica2;component/Images/boton.jpg" Width="40" Height="40" Margin="464,428,244,228" OpacityMask="#BF000000" />-->
         
     </Grid>

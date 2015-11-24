@@ -34,9 +34,7 @@ namespace Posturas
     {
         //Variables para la deteccion de la postura
         const int PostureDetectionNumber = 10;
-        int accumulator = 0;
-        Posture postureInDetection = Posture.None;
-        Posture previousPosture = Posture.None;
+       
         public enum Posture
         {
             None,
@@ -128,9 +126,9 @@ namespace Posturas
         //Creaccion de las coordenadas donde deberan dibujarse las visualizaciones
         Point puntocomp;
 
-        private bool visible = false, correcto = false, recto = false, posic1 = false, posic2 = false, infrared=false;
+        private bool  color=true, depth=false, correcto=false, infrared=false;
 
-        private int contadorCaptura = 0, contadorVideo=0, contadorDepth=0, contadorInfrared=0;
+        private int contadorCaptura = 0, contadorVideo=0, contadorDepth=0, contadorInfrared=0,cont=0;
 
         //Variable para cambiar la precisión
         private float precision = 4;
@@ -140,7 +138,6 @@ namespace Posturas
         public MainWindow()
         {
             InitializeComponent();
-            
         }
 
 
@@ -285,71 +282,10 @@ namespace Posturas
                 {
                     if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
                     {
-                        Puntos handRight = new Puntos();
-                        handRight.x = skeleton.Joints[JointType.HandRight].Position.X;
-                        handRight.y = skeleton.Joints[JointType.HandRight].Position.Y;
-                        handRight.z = skeleton.Joints[JointType.HandRight].Position.Z;
-
-                      
-                        Puntos handLeft = new Puntos();
-                        handLeft.x = skeleton.Joints[JointType.HandLeft].Position.X;
-                        handLeft.y = skeleton.Joints[JointType.HandLeft].Position.Y;
-                        handLeft.z = skeleton.Joints[JointType.HandLeft].Position.Z;
-
-                        Puntos elbowRight = new Puntos();
-                        elbowRight.x = skeleton.Joints[JointType.ElbowRight].Position.X;
-                        elbowRight.y = skeleton.Joints[JointType.ElbowRight].Position.Y;
-                        elbowRight.z = skeleton.Joints[JointType.ElbowRight].Position.Z;
-
-                        Puntos elbowLeft = new Puntos();
-                        elbowLeft.x = skeleton.Joints[JointType.ElbowLeft].Position.X;
-                        elbowLeft.y = skeleton.Joints[JointType.ElbowLeft].Position.Y;
-                        elbowLeft.z = skeleton.Joints[JointType.ElbowLeft].Position.Z;
-
-
-
-                        Puntos kneeRight = new Puntos();
-                        kneeRight.x = skeleton.Joints[JointType.KneeRight].Position.X;
-                        kneeRight.y = skeleton.Joints[JointType.KneeRight].Position.Y;
-                        kneeRight.z = skeleton.Joints[JointType.KneeRight].Position.Z;
-
-                        Puntos kneeLeft = new Puntos();
-                        kneeLeft.x = skeleton.Joints[JointType.KneeLeft].Position.X;
-                        kneeLeft.y = skeleton.Joints[JointType.KneeLeft].Position.Y;
-                        kneeLeft.z = skeleton.Joints[JointType.KneeLeft].Position.Z;
-
-                        Puntos shoulderRight = new Puntos();
-                        kneeRight.x = skeleton.Joints[JointType.ShoulderRight].Position.X;
-                        kneeRight.y = skeleton.Joints[JointType.ShoulderRight].Position.Y;
-                        kneeRight.z = skeleton.Joints[JointType.ShoulderRight].Position.Z;
-
-                        Puntos shoulderLeft = new Puntos();
-                        kneeLeft.x = skeleton.Joints[JointType.ShoulderLeft].Position.X;
-                        kneeLeft.y = skeleton.Joints[JointType.ShoulderLeft].Position.Y;
-                        kneeLeft.z = skeleton.Joints[JointType.ShoulderLeft].Position.Z;
-
-                        Puntos footRight = new Puntos();
-                        footRight.x = skeleton.Joints[JointType.FootRight].Position.X;
-                        footRight.y = skeleton.Joints[JointType.FootRight].Position.Y;
-                        footRight.z = skeleton.Joints[JointType.FootRight].Position.Z;
-
-                        Puntos footLeft = new Puntos();
-                        footLeft.x = skeleton.Joints[JointType.FootLeft].Position.X;
-                        footLeft.y = skeleton.Joints[JointType.FootLeft].Position.Y;
-                        footLeft.z = skeleton.Joints[JointType.FootLeft].Position.Z;
-
-                        Puntos shoulderCenter = new Puntos();
-                        shoulderCenter.x = skeleton.Joints[JointType.ShoulderCenter].Position.X;
-                        shoulderCenter.y = skeleton.Joints[JointType.ShoulderCenter].Position.Y;
-                        shoulderCenter.z = skeleton.Joints[JointType.ShoulderCenter].Position.Z;
-
                         Puntos spine = new Puntos();
                         spine.x = skeleton.Joints[JointType.Spine].Position.X;
                         spine.y = skeleton.Joints[JointType.Spine].Position.Y;
                         spine.z = skeleton.Joints[JointType.Spine].Position.Z;
-
-                       
-
 
                         //Controlador de color de margen
                         float distancia = spine.z * 2;
@@ -372,26 +308,22 @@ namespace Posturas
 
                         Point pr = SkeletonPointToScreen(skeleton.Joints[JointType.HandRight].Position);
                         Point pl = SkeletonPointToScreen(skeleton.Joints[JointType.HandLeft].Position);
-                        if (tocarCaptura(pr, pl, puntocomp) && contadorCaptura >= 50)
+                        if (tocarCaptura(pr, pl,puntocomp) && contadorCaptura >= 50)
                         {
                             this.textblock.Text = "Captura";
                         }
-                        if (tocarVideo(pr, pl, puntocomp) && contadorVideo >= 50)
+                        
+                        if (tocarDepth(pr, pl) && contadorDepth >= 50)
                         {
-                            this.textblock.Text = "Captura";
+                            cambioVisualizacion("depth");
                         }
-                        if (tocarDepth(pr, pl, puntocomp) && contadorDepth >= 50)
+                        if (tocarInfrared(pr, pl) && contadorInfrared >= 50)
                         {
-                            this.textblock.Text = "Captura";
+                            cambioVisualizacion("infrared");
                         }
-                        if (tocarInfrared(pr, pl, puntocomp) && contadorInfrared >= 50)
+                        if (tocarVideo(pr, pl) && contadorVideo >= 50)
                         {
-                            this.textblock.Text = "Captura";
-                        }
-                        else
-                        {
-                            //this.textblock.Text = .ToString() + "\n" + handRight.y.ToString();
-                            this.textblock.Text = pr.X.ToString() + "\n" + puntocomp.X.ToString();
+                            cambioVisualizacion("color");
                         }
                     }
                 }
@@ -401,33 +333,18 @@ namespace Posturas
                     Pen pen = new Pen(Brushes.Green, 3);
                     // Draw a transparent background to set the render size
                     dc.DrawRectangle(Brushes.Transparent, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
-                    
-                    dc.DrawEllipse(Brushes.Green, pen, puntocomp, 40, 40);
 
+                    dc.DrawRectangle(Brushes.LightGray, pen, new Rect(0.0, 390.0, 150.0, 130.0));
+                    dc.DrawRectangle(Brushes.LightGray, pen, new Rect(150.0, 390.0, 150.0, 130.0));
+                    dc.DrawRectangle(Brushes.LightGray, pen, new Rect(300.0, 390.0, 150.0, 130.0));
+                    FormattedText fText = new FormattedText("Color",System.Globalization.CultureInfo.GetCultureInfo("en-us"),FlowDirection.LeftToRight,new Typeface("Verdana"),24,Brushes.Black);
+                    FormattedText fText2 = new FormattedText("Depth", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.Black);
+                    FormattedText fText3 = new FormattedText("IR", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.Black);
+                   
+                    dc.DrawText(fText, new Point(45.0,425.0));
+                    dc.DrawText(fText2, new Point(190.0, 425.0));
+                    dc.DrawText(fText3, new Point(360.0, 425.0));
 
-                  /*  if (skeletons.Length != 0)
-                    {
-                        foreach (Skeleton skel in skeletons)
-                        {
-                            RenderClippedEdges(skel, dc);
-
-                            if (skel.TrackingState == SkeletonTrackingState.Tracked)
-                            {
-                                this.DrawBonesAndJoints(skel, dc);
-                                
-                            }
-                            else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
-                            {
-                                dc.DrawEllipse(
-                                this.centerPointBrush,
-                                null,
-                                this.SkeletonPointToScreen(skel.Position),
-                                BodyCenterThickness,
-                                BodyCenterThickness);
-                            }
-                        }
-                    }
-                    */
                     // prevent drawing outside of our render area
                     this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
                 }
@@ -581,12 +498,12 @@ namespace Posturas
             return post;
         }
 
-        bool tocarVideo(Point handRight, Point handLeft, Point comp)
+        bool tocarVideo(Point handRight, Point handLeft)
         {
             bool post = false;
 
-            if ((Math.Abs(handRight.Y - comp.Y) < 10 * precision && Math.Abs(handRight.X - comp.X) < 10 * precision) ||
-                (Math.Abs(handLeft.Y - comp.Y) < 10 * precision && Math.Abs(handLeft.X - comp.X) < 10 * precision))
+            if ((handRight.X > 0.0 && handRight.X < 150.0 && handRight.Y > 390.0 && handRight.Y < 520.0) ||
+                (handLeft.X > 0.0 && handLeft.X < 150.0 && handLeft.Y > 390.0 && handLeft.Y < 520.0))
             {
 
                 post = true;
@@ -599,12 +516,12 @@ namespace Posturas
 
             return post;
         }
-        bool tocarDepth(Point handRight, Point handLeft, Point comp)
+        bool tocarDepth(Point handRight, Point handLeft)
         {
             bool post = false;
 
-            if ((Math.Abs(handRight.Y - comp.Y) < 10 * precision && Math.Abs(handRight.X - comp.X) < 10 * precision) ||
-                (Math.Abs(handLeft.Y - comp.Y) < 10 * precision && Math.Abs(handLeft.X - comp.X) < 10 * precision))
+            if ((handRight.X > 150.0 && handRight.X < 300.0 && handRight.Y > 390.0 && handRight.Y < 520.0) ||
+                (handLeft.X > 150.0 && handLeft.X < 300.0 && handLeft.Y > 390.0 && handLeft.Y < 520.0))
             {
 
                 post = true;
@@ -617,12 +534,12 @@ namespace Posturas
 
             return post;
         }
-        bool tocarInfrared(Point handRight, Point handLeft, Point comp)
+        bool tocarInfrared(Point handRight, Point handLeft)
         {
             bool post = false;
 
-            if ((Math.Abs(handRight.Y - comp.Y) < 10 * precision && Math.Abs(handRight.X - comp.X) < 10 * precision) ||
-                (Math.Abs(handLeft.Y - comp.Y) < 10 * precision && Math.Abs(handLeft.X - comp.X) < 10 * precision))
+            if ((handRight.X > 300.0 && handRight.X < 450.0 && handRight.Y > 390.0 && handRight.Y < 520.0) ||
+                (handLeft.X > 300.0 && handLeft.X < 450.0 && handLeft.Y > 390.0 && handLeft.Y < 520.0))
             {
 
                 post = true;
@@ -813,85 +730,163 @@ namespace Posturas
             }
         }
 
-        private void cambioVisualizacion(int cont)
-        {
 
-            if (cont%3==0)
+        private void cambioVisualizacion(string text)
+        {
+            if (cont == 0)
             {
-                this.sensor.ColorStream.Disable();
-                this.grid.Children.Remove(this.sensorVideo);
                 this.grid.Children.Remove(this.sensorDepth);
                 this.grid.Children.Remove(this.sensorInfrared);
-                // Turn on the depth stream to receive depth frames
-                this.grid.Children.Insert(0, this.sensorDepth);
-                this.sensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
 
-                // Allocate space to put the depth pixels we'll receive
-                this.depthPixels = new DepthImagePixel[this.sensor.DepthStream.FramePixelDataLength];
-
-                // Allocate space to put the color pixels we'll create
-                this.colorPixels = new byte[this.sensor.DepthStream.FramePixelDataLength * sizeof(int)];
-
-                // This is the bitmap we'll display on-screen
-                this.colorBitmap = new WriteableBitmap(this.sensor.DepthStream.FrameWidth, this.sensor.DepthStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
-
-                // Set the image we display to point to the bitmap where we'll put the image data
-                this.sensorDepth.Source = this.colorBitmap;
+                cont++;
             }
-            if(cont%3==1)
+
+
+
+            if (color)
             {
-                infrared = true;
-                // Turn on the depth stream to receive depth frames
-                this.sensor.DepthStream.Disable();
-                this.grid.Children.Remove(this.sensorDepth);
+                switch (text)
+                {
+                    case "depth":
+                        this.sensor.ColorFrameReady -= this.SensorColorFrameReady;
+                        this.sensor.ColorStream.Disable();
+                        this.grid.Children.Remove(this.sensorVideo);
 
-                this.grid.Children.Insert(0, this.sensorInfrared);
+                        // Turn on the depth stream to receive depth frames
+                        this.grid.Children.Insert(0, this.sensorDepth);
+                        this.sensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
 
-                // Turn on the color stream to receive color frames
+                        // Allocate space to put the depth pixels we'll receive
+                        this.depthPixels = new DepthImagePixel[this.sensor.DepthStream.FramePixelDataLength];
 
+                        // Allocate space to put the color pixels we'll create
+                        this.colorPixels = new byte[this.sensor.DepthStream.FramePixelDataLength * sizeof(int)];
 
-                this.sensor.ColorFrameReady -= this.SensorColorFrameReady;
-                this.sensor.ColorFrameReady += this.SensorInfraredFrameReady;
-                this.sensor.ColorStream.Enable(ColorImageFormat.InfraredResolution640x480Fps30);
+                        // This is the bitmap we'll display on-screen
+                        this.colorBitmap = new WriteableBitmap(this.sensor.DepthStream.FrameWidth, this.sensor.DepthStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
 
-                // Allocate space to put the pixels we'll receive
-                this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
+                        // Set the image we display to point to the bitmap where we'll put the image data
+                        this.sensorDepth.Source = this.colorBitmap;
 
-                // This is the bitmap we'll display on-screen
-                this.colorBitmap = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Gray16, null);
+                        color = false;
+                        depth = true;
+                        break;
+                    case "infrared":
 
-                // Set the image we display to point to the bitmap where we'll put the image data
-                this.sensorInfrared.Source = this.colorBitmap;
-                
+                        this.sensor.ColorFrameReady -= this.SensorColorFrameReady;
+                        this.sensor.ColorStream.Disable();
+                        this.grid.Children.Remove(this.sensorVideo);
+
+                        this.grid.Children.Insert(0, this.sensorInfrared);
+                        this.sensor.ColorFrameReady += this.SensorInfraredFrameReady;
+                        this.sensor.ColorStream.Enable(ColorImageFormat.InfraredResolution640x480Fps30);
+
+                        // Allocate space to put the pixels we'll receive
+                        this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
+
+                        // This is the bitmap we'll display on-screen
+                        this.colorBitmap = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Gray16, null);
+
+                        // Set the image we display to point to the bitmap where we'll put the image data
+                        this.sensorInfrared.Source = this.colorBitmap;
+
+                        color = false;
+                        infrared = true;
+                        break;
+                }
             }
-            if (cont % 3 == 2)
+            else if (depth)
             {
-                infrared = false;
-                
-                this.sensor.ColorFrameReady -= this.SensorInfraredFrameReady;
-                this.sensor.ColorStream.Disable();
 
-                this.grid.Children.Remove(this.sensorInfrared);
+                switch (text)
+                {
+                    case "color":
+                        this.sensor.DepthStream.Disable();
+                        this.grid.Children.Remove(this.sensorDepth);
 
-                this.grid.Children.Insert(0, this.sensorVideo);
+                        this.grid.Children.Insert(0, this.sensorVideo);
+                        this.sensor.ColorFrameReady += this.SensorColorFrameReady;
 
-                this.sensor.ColorFrameReady += this.SensorColorFrameReady;
-                this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
-                 
+                        this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+
+                        color = true;
+                        depth = false;
+                        break;
+                    case "infrared":
+                        this.sensor.DepthStream.Disable();
+                        this.grid.Children.Remove(this.sensorDepth);
+
+                        this.sensor.ColorStream.Disable();
+                        this.grid.Children.Insert(0, this.sensorInfrared);
+                        this.sensor.ColorFrameReady += this.SensorInfraredFrameReady;
+
+                        this.sensor.ColorStream.Enable(ColorImageFormat.InfraredResolution640x480Fps30);
+
+                        // Allocate space to put the pixels we'll receive
+                        this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
+
+                        // This is the bitmap we'll display on-screen
+                        this.colorBitmap = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Gray16, null);
+
+                        // Set the image we display to point to the bitmap where we'll put the image data
+                        this.sensorInfrared.Source = this.colorBitmap;
+
+                        depth = false;
+                        infrared = true;
+                        break;
+                }
+
+            }
+            else
+            {
+
+                switch (text)
+                {
+                    case "color":
+                        this.sensor.ColorFrameReady -= this.SensorInfraredFrameReady;
+                        this.sensor.ColorStream.Disable();
+                        this.grid.Children.Remove(this.sensorInfrared);
+
+                        this.grid.Children.Insert(0, this.sensorVideo);
+                        this.sensor.ColorFrameReady += this.SensorColorFrameReady;
+
+                        this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+
+                        color = true;
+                        infrared = false;
+                        break;
+                    case "depth":
+                        this.sensor.ColorFrameReady -= this.SensorInfraredFrameReady;
+                        this.sensor.ColorStream.Disable();
+                        this.grid.Children.Remove(this.sensorInfrared);
+                        
+
+                        // Turn on the depth stream to receive depth frames
+                        this.grid.Children.Insert(0, this.sensorDepth);
+                        this.sensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
+
+                        // Allocate space to put the depth pixels we'll receive
+                        this.depthPixels = new DepthImagePixel[this.sensor.DepthStream.FramePixelDataLength];
+
+                        // Allocate space to put the color pixels we'll create
+                        this.colorPixels = new byte[this.sensor.DepthStream.FramePixelDataLength * sizeof(int)];
+
+                        // This is the bitmap we'll display on-screen
+                        this.colorBitmap = new WriteableBitmap(this.sensor.DepthStream.FrameWidth, this.sensor.DepthStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+
+                        // Set the image we display to point to the bitmap where we'll put the image data
+                        this.sensorDepth.Source = this.colorBitmap;
+
+                        infrared = false;
+                        depth = true;
+                        break;
+                }
+
             }
 
-            cont++;
 
-        }
-
-
-       /* private void btnCaptureImage_Click(object sender, RoutedEventArgs e)
-        {
-            BitmapSource image = (BitmapSource)Image.Source;
-
-            
-        }
-        */
+        }    
+           
 
     }
 }

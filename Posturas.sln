@@ -6,9 +6,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B0D1F742-5E1F-46DC-8B05-F776453146DA}"
 	ProjectSection(SolutionItems) = preProject
 		Practica2\boton.jpg = Practica2\boton.jpg
+		Practica2\Images\camera.png = Practica2\Images\camera.png
 		Posturas\Captura.PNG = Posturas\Captura.PNG
 		Posturas\Captura1.PNG = Posturas\Captura1.PNG
 		Posturas\Captura2.PNG = Posturas\Captura2.PNG
+		Practica2\Images\logo.png = Practica2\Images\logo.png
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practica2", "Practica2\Practica2.csproj", "{C41BAC27-3A75-4458-9473-882DCE916CB7}"

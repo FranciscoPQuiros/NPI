@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Microsoft.Kinect;
 using System.IO;
 using Coding4Fun.Kinect.Wpf;
+using System.Windows.Threading;
 
 namespace Posturas
 {
@@ -128,13 +129,19 @@ namespace Posturas
         //Creaccion de las coordenadas donde deberan dibujarse las visualizaciones
         Point puntocomp;
 
-        private bool  color=true, depth=false, correcto=false, infrared=false, slider=false, captura=false;
+        private bool  color=true, depth=false, correcto=false, infrared=false, slider=false, captura=false, dentro=false;
 
         private int contadorCaptura = 0, contadorVideo = 0, contadorDepth = 0, contadorInfrared = 0, cont = 0, contadorSlider=0, angule=0;
 
         private double handY = 250.0;
         //Variable para cambiar la precisión
         private float precision = 4;
+
+        private DispatcherTimer dispathcer;
+        
+
+
+
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -143,48 +150,7 @@ namespace Posturas
             InitializeComponent();
             
         }
-
-
-
-        /// <summary>
-        /// Draws indicators to show which edges are clipping skeleton data
-        /// </summary>
-        /// <param name="skeleton">skeleton to draw clipping information for</param>
-        /// <param name="drawingContext">drawing context to draw to</param>
-        private static void RenderClippedEdges(Skeleton skeleton, DrawingContext drawingContext)
-        {
-            if (skeleton.ClippedEdges.HasFlag(FrameEdges.Bottom))
-            {
-                drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(0, RenderHeight - ClipBoundsThickness, RenderWidth, ClipBoundsThickness));
-            }
-
-            if (skeleton.ClippedEdges.HasFlag(FrameEdges.Top))
-            {
-                drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(0, 0, RenderWidth, ClipBoundsThickness));
-            }
-
-            if (skeleton.ClippedEdges.HasFlag(FrameEdges.Left))
-            {
-                drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(0, 0, ClipBoundsThickness, RenderHeight));
-            }
-
-            if (skeleton.ClippedEdges.HasFlag(FrameEdges.Right))
-            {
-                drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(RenderWidth - ClipBoundsThickness, 0, ClipBoundsThickness, RenderHeight));
-            }
-        }
+        
         /// <summary>
         /// Controla los sucesos de la ventana principal
         /// </summary>
@@ -192,7 +158,15 @@ namespace Posturas
         /// <param name="e"></param>
         private void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
-       
+            ImageBrush logo = new ImageBrush();
+            logo.ImageSource = new BitmapImage(new Uri("../../Images/logo.ico", UriKind.Relative));
+
+            circulo.Fill = logo;
+
+
+            this.dispathcer = new DispatcherTimer();
+            dispathcer.Interval = new TimeSpan(0, 0, 1);
+
             // Create the drawing group we'll use for drawing
             this.drawingGroup = new DrawingGroup();
 
@@ -231,6 +205,14 @@ namespace Posturas
                 // Add an event handler to be called whenever there is new color frame data
                 this.sensor.SkeletonFrameReady += this.SensorSkeletonFrameReady;
 
+                //
+                this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
+
+                this.colorBitmap = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+
+                this.sensorVideo.Source = this.colorBitmap;
+                //
+
                 this.sensor.ColorFrameReady += this.SensorColorFrameReady;
 
                 this.sensor.DepthFrameReady += this.SensorDepthFrameReady;
@@ -261,6 +243,46 @@ namespace Posturas
             if (null != this.sensor)
             {
                 this.sensor.Stop();
+            }
+        }
+
+        /// <summary>
+        /// Draws indicators to show which edges are clipping skeleton data
+        /// </summary>
+        /// <param name="skeleton">skeleton to draw clipping information for</param>
+        /// <param name="drawingContext">drawing context to draw to</param>
+        private static void RenderClippedEdges(Skeleton skeleton, DrawingContext drawingContext)
+        {
+            if (skeleton.ClippedEdges.HasFlag(FrameEdges.Bottom))
+            {
+                drawingContext.DrawRectangle(
+                    Brushes.Red,
+                    null,
+                    new Rect(0, RenderHeight - ClipBoundsThickness, RenderWidth, ClipBoundsThickness));
+            }
+
+            if (skeleton.ClippedEdges.HasFlag(FrameEdges.Top))
+            {
+                drawingContext.DrawRectangle(
+                    Brushes.Red,
+                    null,
+                    new Rect(0, 0, RenderWidth, ClipBoundsThickness));
+            }
+
+            if (skeleton.ClippedEdges.HasFlag(FrameEdges.Left))
+            {
+                drawingContext.DrawRectangle(
+                    Brushes.Red,
+                    null,
+                    new Rect(0, 0, ClipBoundsThickness, RenderHeight));
+            }
+
+            if (skeleton.ClippedEdges.HasFlag(FrameEdges.Right))
+            {
+                drawingContext.DrawRectangle(
+                    Brushes.Red,
+                    null,
+                    new Rect(RenderWidth - ClipBoundsThickness, 0, ClipBoundsThickness, RenderHeight));
             }
         }
 
@@ -313,16 +335,54 @@ namespace Posturas
 
                         Point pr = SkeletonPointToScreen(skeleton.Joints[JointType.HandRight].Position);
                         Point pl = SkeletonPointToScreen(skeleton.Joints[JointType.HandLeft].Position);
-                        if (tocarCaptura(pr, pl, puntocomp) && contadorCaptura >= 50)
+
+                        
+                        if (tocarCaptura(pr, pl, puntocomp) && contadorCaptura >= 50 )
                         {
-                            if (depth || color)
-                            {
-                                captura = true;
-                            }
-                            
+                            captura = true;
+                            textblock.Text = "Colocate en la posicion que quieras.";
                         }
-                        else
+
+                        if (captura && !tocarCaptura(pr, pl, puntocomp))
                         {
+                            int temp = 5;
+
+                            textblock.Text = "La foto se realizara en " + temp + " segundos.";
+
+
+                            this.dispathcer.Tick += (s, a) =>
+                            {
+                                temp--;
+
+                                textblock.Text = "La foto se realizara en " + temp + " segundos.";
+                                if (temp == 0)
+                                {
+
+                                    BitmapEncoder encoder = new PngBitmapEncoder();
+                                    encoder.Frames.Add(BitmapFrame.Create(this.colorBitmap));
+                                    //string nombre = "Foto" + DateTime.Now.ToString() + ".png";
+
+                                    string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "foto.png");
+                                    try
+                                    {
+                                        using (FileStream fs = new FileStream(path, FileMode.Create))
+                                        {
+                                            encoder.Save(fs);
+
+                                        }
+                                    }
+                                    catch (IOException ioe)
+                                    {
+                                        Console.WriteLine(ioe.ToString());
+                                    }
+
+                                    textblock.Text = "";
+                                    this.dispathcer.Stop();
+                                }
+
+                            };
+                           
+                            this.dispathcer.Start();
                             captura = false;
                         }
                         
@@ -386,20 +446,23 @@ namespace Posturas
 
                     
                     dc.DrawRectangle(Brushes.White, new Pen(Brushes.Gray, 3), new Rect(540.0, handY, 50.0, 20.0));
-                    
 
-                    FormattedText fText = new FormattedText("Color",System.Globalization.CultureInfo.GetCultureInfo("en-us"),FlowDirection.LeftToRight,new Typeface("Verdana"),24,Brushes.White);
-                    FormattedText fText2 = new FormattedText("Depth", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.White);
-                    FormattedText fText3 = new FormattedText("IR", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.White);
-                   
-                    dc.DrawText(fText, new Point(45.0,425.0));
+                    dc.DrawRectangle(Brushes.Gray, null, new Rect(40.0, 425.0, 75.0, 30.0));
+                    dc.DrawRectangle(Brushes.Gray, null, new Rect(190.0, 425.0, 75.0, 30.0));
+                    dc.DrawRectangle(Brushes.Gray, null, new Rect(340.0, 425.0, 70.0, 30.0));
+
+                    FormattedText fText = new FormattedText("Color", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.Black);
+                    FormattedText fText2 = new FormattedText("Depth", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.Black);
+                    FormattedText fText3 = new FormattedText("IR", System.Globalization.CultureInfo.GetCultureInfo("en-us"), FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.Black);
+
+                    dc.DrawText(fText, new Point(45.0, 425.0));
                     dc.DrawText(fText2, new Point(190.0, 425.0));
                     dc.DrawText(fText3, new Point(360.0, 425.0));
-
                     // prevent drawing outside of our render area
                     this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
                 }
         }
+
 
         /// <summary>
         /// Video en color
@@ -412,24 +475,25 @@ namespace Posturas
 
                 using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
                 {
-                    if (colorFrame == null) return;
+                    if (colorFrame != null  && color)
+                    {
+                        // Copy the pixel data from the image to a temporary array
+                        colorFrame.CopyPixelDataTo(this.colorPixels);
 
-                    byte[] colorData = new byte[colorFrame.PixelDataLength];
-
-                    colorFrame.CopyPixelDataTo(colorData);
-
-                    sensorVideo.Source = BitmapSource.Create(colorFrame.Width, colorFrame.Height, 96, 96, PixelFormats.Bgr32, null, colorData, colorFrame.Width * colorFrame.BytesPerPixel);
-
-                    this.colorBitmap.WritePixels(
-                        new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight),
-                        this.colorPixels,
-                        this.colorBitmap.PixelWidth * sizeof(int),
-                        0);
+                        // Write the pixel data into our bitmap
+                        this.colorBitmap.WritePixels(
+                            new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight),
+                            this.colorPixels,
+                            this.colorBitmap.PixelWidth * colorFrame.BytesPerPixel,
+                            0);
+                    }
                 }
 
-
+                
         }
-        // <summary>
+        
+
+        /// <summary>
         /// Event handler for Kinect sensor's DepthFrameReady event
         /// </summary>
         /// <param name="sender">object sending the event</param>
@@ -487,47 +551,11 @@ namespace Posturas
                         0);
                 }
 
-                if (captura)
-                {
-                    captura = false;
-
-                    BitmapEncoder encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(this.colorBitmap));
-                    string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Image.png");
-                    try
-                    {
-                        using (FileStream fs = new FileStream(path, FileMode.Create))
-                        {
-                            encoder.Save(fs);
-                        }
-                    }
-                    catch (IOException ioe)
-                    {
-                        Console.WriteLine(ioe.ToString());
-                    }
-                }
+                
             }
 
-            if (captura)
-            {
-                captura = false;
-
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(this.colorBitmap));
-                string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Image.png");
-                try
-                {
-                    using (FileStream fs = new FileStream(path, FileMode.Create))
-                    {
-                        encoder.Save(fs);
-                    }
-                }
-                catch (IOException ioe)
-                {
-                    Console.WriteLine(ioe.ToString());
-                }
-            }
         }
+
 
         /// <summary>
         /// Event handler for Kinect sensor's InfraredFrameReady event
@@ -551,6 +579,7 @@ namespace Posturas
                         0);
                 }
             }
+
         }
 
 
@@ -723,6 +752,7 @@ namespace Posturas
 
         #endregion
 
+
         /// <summary>
         /// Draws a skeleton's bones and joints
         /// </summary>
@@ -781,6 +811,7 @@ namespace Posturas
 
         }
 
+
         /// <summary>
         /// Maps a SkeletonPoint to lie within our render space and converts to Point
         /// </summary>
@@ -793,6 +824,7 @@ namespace Posturas
             ColorImagePoint ColorPoint = this.sensor.CoordinateMapper.MapSkeletonPointToColorPoint(skelpoint, ColorImageFormat.RgbResolution640x480Fps30);
             return new Point(ColorPoint.X, ColorPoint.Y);
         }
+
 
         /// <summary>
         /// Draws a bone line between two joints
@@ -928,6 +960,12 @@ namespace Posturas
 
                         this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
 
+                        this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
+
+                        this.colorBitmap = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+
+                        this.sensorVideo.Source = this.colorBitmap;
+
                         color = true;
                         depth = false;
                         break;
@@ -970,6 +1008,12 @@ namespace Posturas
                         this.sensor.ColorFrameReady += this.SensorColorFrameReady;
 
                         this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+
+                        this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
+
+                        this.colorBitmap = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+
+                        this.sensorVideo.Source = this.colorBitmap;
 
                         color = true;
                         infrared = false;

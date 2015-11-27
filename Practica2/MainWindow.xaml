@@ -42,6 +42,9 @@
         <Image x:Name="sensorInfrared" Width="640" Height="520" Margin="54,108,54,28" />
         <Image x:Name="Image" Width="640" Height="520" Margin="54,108,54,28" />
         <!--<Image x:Name="Captura" Source="/Practica2;component/Images/boton.jpg" Width="40" Height="40" Margin="464,428,244,228" OpacityMask="#BF000000" />-->
+
+        <Ellipse x:Name="circulo" Width="50" Height="50" Margin="66,163,625,483" />
+            
         
     </Grid>
 

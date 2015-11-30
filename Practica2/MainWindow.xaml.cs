@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -361,8 +362,8 @@ namespace Posturas
                                     BitmapEncoder encoder = new PngBitmapEncoder();
                                     encoder.Frames.Add(BitmapFrame.Create(this.colorBitmap));
                                     //string nombre = "Foto" + DateTime.Now.ToString() + ".png";
-
-                                    string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "foto.png");
+                                    string time = System.DateTime.Now.ToString("hh'-'mm'-'ss", CultureInfo.CurrentUICulture.DateTimeFormat);
+                                    string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Foto-" + time +".png");
                                     try
                                     {
                                         using (FileStream fs = new FileStream(path, FileMode.Create))
